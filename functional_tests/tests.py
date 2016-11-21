@@ -1,8 +1,8 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -13,7 +13,7 @@ class NewVisitorTest(unittest.TestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         #Scott has heard about a new online to-do app. He goes to check it out
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         #He notices the page title and header mention to-do lists
         self.assertIn('To-Do',self.browser.title)
@@ -33,7 +33,7 @@ class NewVisitorTest(unittest.TestCase):
         #When he hits enter, the page updates, and now the page lists
         # "1: Charge heli batteries" as an item in the to-do table
         inputbox.send_keys(Keys.ENTER)
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         self.check_for_row_in_list_table('1: Charge heli batteries')
         
         #There is still a textbox inviting him to add another item.
@@ -43,7 +43,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
 
         #The page updates again, and now shows both items on the list
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         self.check_for_row_in_list_table('1: Charge heli batteries')
         self.check_for_row_in_list_table('2: Charge headset batteries')
 
@@ -61,6 +61,3 @@ class NewVisitorTest(unittest.TestCase):
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
      
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
