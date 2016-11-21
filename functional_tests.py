@@ -19,7 +19,7 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn('To-Do',self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('To-Do', header_text)
-        
+
         #He is invited to create an item right away
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
@@ -36,20 +36,24 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Charge heli batteries' for row in rows),
-            'New to-do item did not appear in table'
-            )
+        self.assertIn('1: Charge heli batteries', [row.text for row in rows])
         
         #There is still a textbox inviting him to add another item.
         #He enters "Charge headset batteries"
-        self.fail('Finish the test!')
-        
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Charge headset batteries')
+        inputbox.send_keys(Keys.ENTER)
+
         #The page updates again, and now shows both items on the list
-        
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Charge heli batteries', [row.text for row in rows])
+        self.assertIn('2: Charge headset batteries', [row.text for row in rows])
+
         #Scott wonders if the site will remember his list.
         #He sees the site created a unique URL for him.
         #There is some explanatory text to that effect.
+        self.fail('Finish the test!')
         
         #He visits that URL.  The list is still there.
         
@@ -57,4 +61,3 @@ class NewVisitorTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
-    
