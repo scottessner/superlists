@@ -33,7 +33,7 @@ class NewVisitorTest(unittest.TestCase):
         #When he hits enter, the page updates, and now the page lists
         # "1: Charge heli batteries" as an item in the to-do table
         inputbox.send_keys(Keys.ENTER)
-
+        self.browser.get('http://localhost:8000')
         self.check_for_row_in_list_table('1: Charge heli batteries')
         
         #There is still a textbox inviting him to add another item.
@@ -43,6 +43,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
 
         #The page updates again, and now shows both items on the list
+        self.browser.get('http://localhost:8000')
         self.check_for_row_in_list_table('1: Charge heli batteries')
         self.check_for_row_in_list_table('2: Charge headset batteries')
 
