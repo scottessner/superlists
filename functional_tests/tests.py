@@ -1,6 +1,10 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
 import time
 
 class NewVisitorTest(LiveServerTestCase):
@@ -34,10 +38,10 @@ class NewVisitorTest(LiveServerTestCase):
         #When he hits enter, the page updates, and now the page lists
         # "1: Charge heli batteries" as an item in the to-do table
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
+
+        self.wait_for_page_loaded(10)          
         scott_list_url = self.browser.current_url
         #self.browser.get(self.live_server_url)
-
         self.assertRegex(scott_list_url, '/lists/.+')
         self.check_for_row_in_list_table('1: Charge heli batteries')
         
@@ -46,10 +50,11 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Charge headset batteries')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-
+ 
         #The page updates again, and now shows both items on the list
         #self.browser.get(self.live_server_url)
+        time.sleep(3)
+        self.wait_for_page_loaded(10)
         self.check_for_row_in_list_table('1: Charge heli batteries')
         self.check_for_row_in_list_table('2: Charge headset batteries')
 
@@ -67,12 +72,14 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('Charge headset batteries', page_text)
 
         #Francis starts a new list by entering a new item
-        inputbox = self.browser.find_element_by_id('new_item_id')
+        time.sleep(10)
+        inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
+        
 
         #Francis gets his own unique URL
+        self.wait_for_page_loaded(10)
         francis_list_url = self.browser.current_url
         self.assertRegex(francis_list_url, '/lists/.+')
         self.assertNotEqual(francis_list_url, scott_list_url)
@@ -83,7 +90,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('Charge headset batteries', page_text)        
         
     def check_for_row_in_list_table(self, row_text):
+        self.wait_for_page_loaded(10)
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
      
+    def wait_for_page_loaded(self, timeout):
+        WebDriverWait(self.browser, timeout).until(
+            expected_conditions.presence_of_element_located(
+                (By.ID, 'id_list_table')))
