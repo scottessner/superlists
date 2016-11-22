@@ -86,8 +86,20 @@ class NewVisitorTest(LiveServerTestCase):
         #Again there is no trace of Scott's list
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Charge heli batteries', page_text)
-        self.assertNotIn('Charge headset batteries', page_text)        
-        
+        self.assertNotIn('Charge headset batteries', page_text)
+
+    def test_layout_and_styling(self):
+        #Scott goes to the home page
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        #He notices the layout is now centered
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=5)
+
     def check_for_row_in_list_table(self, row_text):
         self.wait_for_page_loaded(10)
         table = self.browser.find_element_by_id('id_list_table')
