@@ -42,8 +42,6 @@ class NewVisitorTest(FunctionalTest):
  
         #The page updates again, and now shows both items on the list
         #self.browser.get(self.live_server_url)
-        time.sleep(3)
-        self.wait_for_page_loaded(10)
         self.check_for_row_in_list_table('1: Charge heli batteries')
         self.check_for_row_in_list_table('2: Charge headset batteries')
 

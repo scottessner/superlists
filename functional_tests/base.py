@@ -37,7 +37,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                 (By.ID, 'id_list_table')))
             
     def check_for_row_in_list_table(self, row_text):
-        self.wait_for_page_loaded(10)
+        self.wait_for_page_loaded(20)
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
